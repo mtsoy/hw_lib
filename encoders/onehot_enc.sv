@@ -1,11 +1,11 @@
-/* AUTHOR:     		git: mtsoy, email: tsoy.mo@phystech.edu
+/* AUTHOR:      git: mtsoy, email: tsoy.mo@phystech.edu
  *
- * DESCRIPTION:     	The module calculates the position of '1' in a vector given.
- *                  	Works correctly only for vectors that contain not more than one '1'.
- *						If there are no '1' in the vector the answer is supposed to be zero. 
+ * DESCRIPTION: The module calculates the position of '1' in a vector given.
+ *              Works correctly only for vectors that contain not more than one '1'.
+ *		If there are no '1' in the vector the answer is supposed to be zero. 
  */
 
-module onehot_dec #(
+module onehot_enc #(
     parameter VECTOR_W   = 4,
     parameter POSITION_W = $clog2(VECTOR_W)
 )(
