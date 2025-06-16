@@ -1,14 +1,14 @@
 `ifndef __UNIQUE_HISTORY__
 `define __UNIQUE_HISTORY__
 
-`include "decoders/onehot_dec.sv"
+`include "encoders/onehot_enc.sv"
 
 module unique_history #(
     parameter DATA_W = -1,
     parameter HISTORY_L = -1
 )(
-    input  logic clk_in,
-    input  logic reset_in,
+    input  logic clock,
+    input  logic reset,
     input  logic [DATA_W-1:0] data_in,
     output logic [DATA_W-1:0] data_out [HISTORY_L-1:0] ,
     output logic [HISTORY_L-1:0] valid_out
@@ -32,8 +32,8 @@ generate
         wire shift = isDataUniq | (old_position >= Gi); // if new value is unique, all buffer elements are to be shifted
                                                         // if new value is not unique, only elements "above" deleted one
                                                         // (it is a previous position of new value) are to be shifted
-        always_ff @(posedge clk_in)
-            if(reset_in)
+        always_ff @(posedge clock)
+            if(reset)
                 buffer[Gi] <= '0;
             else if(shift)
                 buffer[Gi] <= buffer[Gi-1];
@@ -41,8 +41,8 @@ generate
 endgenerate
 
 /* UPDATE VALID SCHEME */
-always_ff @(posedge clk_in)
-    if(reset_in)
+always_ff @(posedge clock)
+    if(reset)
         valid_vector <= '0;
     else if(isDataUniq)
         valid_vector <= (valid_vector << 1) | 1'b1;
@@ -60,9 +60,9 @@ endgenerate
 
 assign isDataUniq = ~|overlap_vector; // all bits are zero in overlap_vector => no coincidence, data_in is unique
 
-onehot_dec #(
+onehot_enc #(
     .VECTOR_W (HISTORY_L)
-) decoder (
+) encoder (
     .vector_in (overlap_vector),
     .position  (old_position)
 );
